@@ -61,4 +61,40 @@ import torch.nn.functional as F
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = model.to(device)
 
+# Training function
+def train_model(model, data_loader, criterion, optimizer, num_epochs=5):
+    model.train()  # Set the model to training mode
+
+    for epoch in range(num_epochs):
+        running_loss = 0.0
+        correct = 0
+        total = 0
+
+        for images, labels in tqdm(data_loader):
+            images, labels = images.to(device), labels.to(device)
+
+            # Forward pass
+            outputs = model(images)
+            loss = criterion(outputs, labels)
+
+            # Backward pass and optimization
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+            # Calculate accuracy
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+            running_loss += loss.item()
+
+        epoch_loss = running_loss / len(data_loader)
+        accuracy = 100 * correct / total
+        print(f"Epoch [{epoch + 1}/{num_epochs}], Loss: {epoch_loss:.4f}, Accuracy: {accuracy:.2f}%")
+
+
+# Train the model
+train_model(model, data_loader, criterion, optimizer, num_epochs=10)
+
+
 
