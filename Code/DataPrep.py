@@ -29,7 +29,7 @@ dataset_df = pd.DataFrame({
     'label': labels
 })
 
-# Save the annotations if needed
+# Save
 dataset_df.to_csv('video_labels.csv', index=False)
 
 #-----------------------------------------------------------------------
@@ -75,17 +75,5 @@ for idx, row in dataset_df.iterrows():
     video_path = row['video_path']
     extract_frames(video_path, output_dir, label)
 
-# Example normalization code in PyTorch
-from torchvision import transforms
-from PIL import Image
 
-transform = transforms.Compose([
-    transforms.ToTensor(),               # Convert image to Tensor
-    transforms.Normalize([0.5], [0.5])   # Normalize to range [-1, 1]
-])
-
-# Sample usage with an extracted frame
-img_path = f"{output_dir}/sample_frame.jpg"
-image = Image.open(img_path)
-image = transform(image)
 

@@ -1,5 +1,10 @@
-from torch.utils.data import Dataset, DataLoader
 import glob
+from PIL import Image
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+from torchvision import models,transforms
 
 
 class ViolenceDataset(Dataset):
@@ -27,14 +32,20 @@ class ViolenceDataset(Dataset):
         return image, label
 
 
+
+
+output_dir = 'preprocessed_frames'
+
+transform = transforms.Compose([
+    transforms.ToTensor(),               # Convert image to Tensor
+    transforms.Normalize([0.5], [0.5])   # Normalize to range [-1, 1]
+])
+
 # Create DataLoader
 dataset = ViolenceDataset(root_dir=output_dir, transform=transform)
 data_loader = DataLoader(dataset, batch_size=32, shuffle=True)
 
-import torch
-import torch.nn as nn
-import torch.optim as optim
-from torchvision import models
+
 
 # Load a pre-trained ResNet model
 class ViolenceClassifier(nn.Module):
