@@ -64,9 +64,6 @@ for video in NV_selected_videos:
     frames = extract_middle_frames(video_path)
     nv_dir[video] = frames
 
-print(v_dir)
-print(nv_dir)
-
 #%%
 def plot_frames(v_dir, nv_dir):
     fig, axes = plt.subplots(10, 5, figsize=(15, 30))
@@ -89,6 +86,7 @@ def plot_frames(v_dir, nv_dir):
             axes[i].set_title("Non-Violence")
 
     plt.tight_layout()
+    fig.savefig("frames_grid.png", bbox_inches='tight')
     plt.show()
 
 plot_frames(v_dir, nv_dir)
