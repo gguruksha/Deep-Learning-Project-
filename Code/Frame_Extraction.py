@@ -1,14 +1,19 @@
 import os
 import cv2
 import pandas as pd
+import configparser
 
 # Define paths
 ROOT_DIR = os.getcwd()
+
+config = configparser.ConfigParser()
+config.read('config.conf')
 os.chdir("..")
-DATA_DIR = os.getcwd() + '/Data'
-dataset_path = DATA_DIR + '/Real Life Violence Dataset/'
-violence_path = os.path.join(dataset_path, 'Violence')
-non_violence_path = os.path.join(dataset_path, 'NonViolence')
+CW_DIR = os.getcwd()
+DATA_DIR = CW_DIR + os.path.sep + config.get('Frames', 'frames_dataset_path') + os.path.sep
+# dataset_path = DATA_DIR + '/Real Life Violence Dataset/'
+violence_path = os.path.join(DATA_DIR, config.get('Frames', 'violence_dir'))
+non_violence_path = os.path.join(DATA_DIR, config.get('Frames', 'non_violence_dir'))
 
 # Initialize lists for data and labels
 data = []
@@ -38,13 +43,12 @@ dataset_df.to_csv('video_labels.csv', index=False)
 #-----------------------------------------------------------------------
 
 # Define output directory for frames
-output_dir = DATA_DIR + '/Preprocessed_Frames'
+output_dir = DATA_DIR + config.get('Frames', 'output_dir')
 os.makedirs(output_dir, exist_ok=True)
-violence_output_dir = output_dir+'/Violence'
-os.makedirs(output_dir+'/Violence', exist_ok=True)
-nonviolence_output_dir = output_dir+'/NonViolence'
-os.makedirs(output_dir+'/NonViolence', exist_ok=True)
-
+violence_output_dir = output_dir + os.path.sep + config.get('Frames', 'violence_dir')
+os.makedirs(violence_output_dir, exist_ok=True)
+nonviolence_output_dir = output_dir + os.path.sep + config.get('Frames', 'non_violence_dir')
+os.makedirs(nonviolence_output_dir, exist_ok=True)
 
 # Frame extraction function
 def extract_frames(video_path, output_folder, label, frame_rate=1, img_size=(224, 224)):
