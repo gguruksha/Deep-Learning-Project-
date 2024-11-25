@@ -18,15 +18,14 @@ Extracts middle 5 frames
 Plot them in 10X5 grid
 
 Notes: # Updated 11/25/2024
+
 Taking the config file to read paths to main base form.
 Added frame count distplot for violence and non violence.
 Updated config to add Visualization Section
 Added a Visualization dir.
-
 Creating on fly and update the Visualization dir.
 """
 #%%
-
 try:
     config = configparser.ConfigParser()
     config.read('config.conf') #Change this before pull request. Console work dir is different
