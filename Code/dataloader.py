@@ -2,8 +2,9 @@ import configparser
 import os
 import pandas as pd
 import torchvision
+import torch
 from torch.utils.data import Dataset, DataLoader
-from torchvision.transforms.v2 import ToTensor
+from torchvision.transforms.v2 import ToTensor, Compose, ToImage, ToDtype
 from torchvision.io import read_video
 
 def prepare_file_paths(data_dir, violence_dir, nonviolence_dir):
@@ -63,10 +64,13 @@ def get_data_loader():
         train.to_csv(train_file_path, index=False)
         test.to_csv(test_file_path, index=False)
 
-    train_dataset = ViolentVideos(train_file_path)
-    test_dataset = ViolentVideos(test_file_path)
+    train_dataset = ViolentVideos(train_file_path, transform=Compose([ToImage(), ToDtype(torch.float32, scale=True)]))
+    test_dataset = ViolentVideos(test_file_path, transform=Compose([ToImage(), ToDtype(torch.float32, scale=True)]))
 
-    train_dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-    test_dataloader = DataLoader(test_dataset, batch_size=32, shuffle=True)
+    train_dataloader = DataLoader(train_dataset, batch_size=int(config.get('Dataset', 'batch_size')), shuffle=True)
+    test_dataloader = DataLoader(test_dataset, batch_size=int(config.get('Dataset', 'batch_size')), shuffle=True)
 
     return train_dataloader, test_dataloader
+
+if __name__ == '__main__':
+    train_loader, test_loader = get_data_loader()
