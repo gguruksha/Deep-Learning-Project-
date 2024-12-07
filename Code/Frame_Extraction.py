@@ -1,14 +1,39 @@
+#%%
+'''
+Frame Extraction from Videos for Static Model
+Root Dir -> /home/ubuntu/Code
+DATA DIR -> /home/ubuntu/Code/dataset ------ Violence and Non Violence Videos are stored here
+
+This file will access the videos from their respective directories and create two new directories:
+Violence_frames and NonViolence_frames
+
+load_videos_from_directory function loads the base videos and creates a csv so that we can access the base video
+path for frame extraction. The paths and their labels are saved as a csv which is accessed in this code for
+frame extraction
+
+extract_frames loads the video one by one and captures and saves frames based on the set frame rate. The frame
+rate is default set to 1 which will give us 1 frame for every second. If more frames are needed we need to change
+the input frame_rate to 1/frames needed. eg for 4 frames per second, frame_rate = 0.25
+
+'''
+
+#%%
 import os
 import cv2
 import pandas as pd
-
+import configparser
+print(os.getcwd())
+#%%
 # Define paths
 ROOT_DIR = os.getcwd()
-os.chdir("..")
-DATA_DIR = os.getcwd() + '/Data'
-dataset_path = DATA_DIR + '/Real Life Violence Dataset/'
-violence_path = os.path.join(dataset_path, 'Violence')
-non_violence_path = os.path.join(dataset_path, 'NonViolence')
+
+config = configparser.ConfigParser()
+config.read('config.conf')
+
+DATA_DIR = config.get('Frames', 'frames_dataset_path') + os.path.sep
+
+violence_path = os.path.join(DATA_DIR, config.get('Dataset', 'violence_directory'))
+non_violence_path = os.path.join(DATA_DIR, config.get('Dataset', 'non_violence_directory'))
 
 # Initialize lists for data and labels
 data = []
@@ -38,13 +63,12 @@ dataset_df.to_csv('video_labels.csv', index=False)
 #-----------------------------------------------------------------------
 
 # Define output directory for frames
-output_dir = DATA_DIR + '/Preprocessed_Frames'
-os.makedirs(output_dir, exist_ok=True)
-violence_output_dir = output_dir+'/Violence'
-os.makedirs(output_dir+'/Violence', exist_ok=True)
-nonviolence_output_dir = output_dir+'/NonViolence'
-os.makedirs(output_dir+'/NonViolence', exist_ok=True)
-
+output_dir = config.get('Frames', 'frames_dataset_path')
+# os.makedirs(output_dir, exist_ok=True)
+violence_output_dir = output_dir + os.path.sep + config.get('Frames', 'violence_frames_dir')
+os.makedirs(violence_output_dir, exist_ok=True)
+nonviolence_output_dir = output_dir + os.path.sep + config.get('Frames', 'non_violence_frames_dir')
+os.makedirs(nonviolence_output_dir, exist_ok=True)
 
 # Frame extraction function
 def extract_frames(video_path, output_folder, label, frame_rate=1, img_size=(224, 224)):

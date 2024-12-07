@@ -41,9 +41,6 @@ class ViolenceDataset(Dataset):
 
 
 
-
-# output_dir = 'preprocessed_frames'
-
 transform = transforms.Compose([
     transforms.ToTensor(),               # Convert image to Tensor
     transforms.Normalize([0.5], [0.5])   # Normalize to range [-1, 1]
@@ -61,7 +58,7 @@ class ViolenceClassifier(nn.Module):
     def __init__(self):
         super(ViolenceClassifier, self).__init__()
         # Load a pre-trained ResNet model
-        self.model = models.resnet18(pretrained=True)
+        self.model = models.resnet50(pretrained=True)
         # Modify the final layer for binary classification
         num_features = self.model.fc.in_features
         self.model.fc = nn.Linear(num_features, 2)  # 2 classes: violence and non-violence
