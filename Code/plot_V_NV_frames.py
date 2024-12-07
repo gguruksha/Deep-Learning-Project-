@@ -32,7 +32,7 @@ try:
     dataset_path = config.get('Dataset', 'dataset_path')
     violence_dir_path = config.get('Dataset', 'violence_directory')
     non_violence_dir_path = config.get('Dataset', 'non_violence_directory')
-    data_dir = os.path.abspath(f"../{dataset_path}") # dataset dir outside code dir.
+    data_dir = os.path.abspath(f"./{dataset_path}") # dataset dir outside code dir.
     violence_dir = os.path.join(data_dir , violence_dir_path)
     non_violence_dir = os.path.join(data_dir , non_violence_dir_path)
     print(f"Data DIR: {data_dir}")
