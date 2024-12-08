@@ -4,6 +4,11 @@ import torch
 from inference_and_annotate import annotate_video  # Import the annotate_video function
 from video_resnet import ViolenceClassifier  # Import the ViolenceClassifier
 import shutil
+from run_inference import ViolenceClassifierInference, get_clips, stitch_clips_with_annotations
+import configparser
+
+config = configparser.ConfigParser()
+config.read("config.conf")
 
 # Streamlit UI setup
 st.set_page_config(page_title="Violence Detection", page_icon=":movie_camera:")
@@ -14,18 +19,7 @@ ANNOTATED_VIDEO_PATH = "annotated_video.mp4"
 MODEL_PATH = "model_resnet.pt"
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Load model
-@st.cache_resource
-def load_model():
-    model = ViolenceClassifier(num_classes=1)
-    state_dict = torch.load("model_resnet.pt", map_location=DEVICE)
-    model.load_state_dict(state_dict, strict=True)
-    model.eval()
-    model.to(DEVICE)
-    return model
-
-
-model = load_model()
+inference_engine = ViolenceClassifierInference()
 
 # Streamlit UI
 st.title("Violent vs Non-Violent Video Classification with Annotation")
@@ -40,15 +34,14 @@ if uploaded_video is not None:
 
     # Perform annotation and classification
     try:
-        annotate_video(
-            video_path=TEMP_VIDEO_PATH,
-            output_path=ANNOTATED_VIDEO_PATH,
-            model=model,
-            device=DEVICE,
-            clip_len=16,
-            overlap=8,
-            threshold=0.5,
-        )
+        clips = get_clips(TEMP_VIDEO_PATH)
+        video_name = os.path.basename(TEMP_VIDEO_PATH)
+        output = inference_engine.infer(clips)
+
+        output_folder = config["Inference"]["output_dir"]
+
+        stitch_clips_with_annotations(clips, output, ANNOTATED_VIDEO_PATH, fps=30)
+
         st.success("The video has been processed and annotated successfully!")
 
         # Display annotated video
@@ -56,49 +49,3 @@ if uploaded_video is not None:
 
     except Exception as e:
         st.error(f"Error during video processing: {e}")
-
-    # Cleanup temporary files
-    if os.path.exists(TEMP_VIDEO_PATH):
-        os.remove(TEMP_VIDEO_PATH)
-
-
-#### CHANGES ###
-#
-# model = ViolenceClassifierInference()
-#
-# # Streamlit UI setup
-# st.set_page_config(page_title="Violence Detection", page_icon=":movie_camera:")
-#
-# # Set constants
-# TEMP_VIDEO_PATH = "temp_video.mp4"
-#
-# # Streamlit UI
-# st.title("Violent vs Non-Violent Video Classification")
-#
-# uploaded_video = st.file_uploader("Upload a video (mp4 format)", type=["mp4"])
-#
-# def classify_video(path):
-#     clips = get_clips(path)
-#     output = model.infer(clips)
-#     if np.max(output) > 0.5:
-#         return "Violent"
-#     else:
-#         return "Non-Violent"
-#
-# if uploaded_video is not None:
-#     # Save uploaded video temporarily
-#     with open(TEMP_VIDEO_PATH, "wb") as f:
-#         f.write(uploaded_video.read())
-#
-#     st.write("Processing the uploaded video...")
-#
-#     # Perform classification
-#     try:
-#         result = classify_video(TEMP_VIDEO_PATH)
-#         st.success(f"The video is classified as: **{result}**")
-#     except Exception as e:
-#         st.error(f"Error during video classification: {e}")
-#
-#     # Cleanup temporary video
-#     if os.path.exists(TEMP_VIDEO_PATH):
-#         os.remove(TEMP_VIDEO_PATH)
