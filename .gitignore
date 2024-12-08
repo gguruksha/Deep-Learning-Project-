@@ -1,3 +1,5 @@
 /Code/dataset/
+/Data
+/Code/video_labels.csv
 .idea
 /Code/model_resnet.pt
