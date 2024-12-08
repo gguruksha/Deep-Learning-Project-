@@ -18,8 +18,7 @@ class ViolenceClassifierInference():
         self.classifier.eval()
 
     def infer(self, video_frames):
-        input = torch.tensor(video_frames)
-        input = self.transforms(input)
+        input = self.transforms(video_frames)
         input = input.to(self.device)
         with torch.no_grad():
             output = self.classifier(input)
