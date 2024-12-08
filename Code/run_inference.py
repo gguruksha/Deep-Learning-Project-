@@ -7,6 +7,7 @@ import cv2
 import numpy as np
 import os
 import configparser
+import subprocess
 
 class ViolenceClassifierInference():
     def __init__(self):
@@ -47,9 +48,10 @@ def stitch_clips_with_annotations(clips, output, output_path, fps=30):
         fps (int): Frames per second for the output video.
     """
     # Extract video dimensions
+    temp_path = "intermediate.mp4"
     num_clips, clip_len, _, height, width = clips.shape
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
+    out = cv2.VideoWriter(temp_path, fourcc, fps, (width, height))
 
     # Flatten clips back into individual frames with annotations
     for clip_idx in range(num_clips):
@@ -70,6 +72,11 @@ def stitch_clips_with_annotations(clips, output, output_path, fps=30):
             out.write(frame_bgr)
 
     out.release()
+
+    subprocess.call(args=f"ffmpeg -y -i {temp_path} -c:v libx264 {output_path}".split(" "))
+
+    if os.path.exists(temp_path):
+        os.remove(temp_path)
     print(f"Annotated video saved to {output_path}")
 
 
@@ -78,7 +85,7 @@ if __name__ == "__main__":
     config.read("config.conf")
     classifier = ViolenceClassifierInference()
     # video_path = "/home/ubuntu/FinalProject/Code/dataset/NonViolence/NV_1.mp4"
-    video_path = "/home/ubuntu/FinalProject/Code/dataset/Violence/V_534.mp4" #-----------Input to be the uploaded video on streamlit
+    video_path = "dataset/Violence/V_534.mp4" #-----------Input to be the uploaded video on streamlit
     clips = get_clips(video_path)
     video_name = os.path.basename(video_path)
     output = classifier.infer(clips)
