@@ -30,7 +30,7 @@ def annotate_video(video_path, output_path, model, device, clip_len=16, overlap=
             clip = clip.permute(1, 0, 2, 3).unsqueeze(0).to(device)  # [1, C, T, H, W]
 
             # Predictions
-            prediction = sigmoid(model(clip)).item()
+            prediction = model(clip).item()
             is_violent = prediction >= threshold
             print("Sigmoid Prediction: {} is_violent: {}".format(prediction, is_violent))
 
