@@ -9,7 +9,6 @@ import configparser
 import numpy as np
 from sklearn.metrics import accuracy_score, f1_score
 
-
 class ViolenceClassifier(nn.Module):
     def __init__(self, num_classes):
         super(ViolenceClassifier, self).__init__()
