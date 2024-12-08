@@ -1,12 +1,10 @@
 import configparser
 import os
 import pandas as pd
-import torchvision
 import random
 import torch
 from torch.utils.data import Dataset, DataLoader
-from torchvision.transforms import InterpolationMode
-from torchvision.transforms.v2 import ToTensor, Compose, ToImage, ToDtype, Resize, CenterCrop
+from torchvision.transforms.v2 import ToTensor, Compose
 from torchvision.io import read_video
 
 def prepare_file_paths(data_dir, violence_dir, nonviolence_dir):
