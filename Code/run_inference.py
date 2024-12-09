@@ -83,8 +83,11 @@ if __name__ == "__main__":
     config = configparser.ConfigParser()
     config.read("config.conf")
     classifier = ViolenceClassifierInference(config['Inference']['model_path'], config['Inference']['device'])
-    # video_path = "/home/ubuntu/FinalProject/Code/dataset/NonViolence/NV_1.mp4"
-    video_path = "dataset/Violence/V_534.mp4" #-----------Input to be the uploaded video on streamlit
+    datapath = config['Dataset']['dataset_path']
+    violence_dir = config['Dataset']['violence_directory']
+    nonviolence_dir = config['Dataset']['non_violence_directory']
+    video = "NV_112.mp4" #---------change the video u want to see here. If it is of type V_ use violence_dir else use nonviolence_dir in below line
+    video_path = os.path.join(os.getcwd(),datapath +os.path.sep + nonviolence_dir + os.path.sep + video)
     clips = get_clips(video_path)
     video_name = os.path.basename(video_path)
     output = classifier.infer(clips)
