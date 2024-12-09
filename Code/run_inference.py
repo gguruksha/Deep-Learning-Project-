@@ -1,5 +1,4 @@
 import torch
-from torchvision.transforms.v2 import ToTensor, Compose
 from video_resnet import ViolenceClassifier
 from torchvision.io import read_video
 from torchvision.models.video import R3D_18_Weights
@@ -10,11 +9,11 @@ import configparser
 import subprocess
 
 class ViolenceClassifierInference():
-    def __init__(self):
+    def __init__(self, model_path, device):
         self.classifier = ViolenceClassifier(num_classes=1)
         self.transforms = R3D_18_Weights.DEFAULT.transforms()
-        self.classifier.load_state_dict(torch.load("model_resnet.pt"))
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.classifier.load_state_dict(torch.load(model_path))
+        self.device = torch.device(device)
         self.classifier.to(self.device)
         self.classifier.eval()
 
@@ -83,7 +82,7 @@ def stitch_clips_with_annotations(clips, output, output_path, fps=30):
 if __name__ == "__main__":
     config = configparser.ConfigParser()
     config.read("config.conf")
-    classifier = ViolenceClassifierInference()
+    classifier = ViolenceClassifierInference(config['Inference']['model_path'], config['Inference']['device'])
     # video_path = "/home/ubuntu/FinalProject/Code/dataset/NonViolence/NV_1.mp4"
     video_path = "dataset/Violence/V_534.mp4" #-----------Input to be the uploaded video on streamlit
     clips = get_clips(video_path)
