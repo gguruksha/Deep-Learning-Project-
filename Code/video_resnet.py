@@ -24,7 +24,7 @@ class ViolenceClassifier(nn.Module):
         return x
 
 
-def train_model(train_dl, epochs, device):
+def train_model(train_dl, epochs, device, save_path):
     model = ViolenceClassifier(num_classes=1)
     for param in model.backbone.parameters():
         param.requires_grad = False
@@ -52,9 +52,9 @@ def train_model(train_dl, epochs, device):
 
         print(f"Epoch {epoch+1} loss: {total_loss / num_steps}")
 
-    torch.save(model.state_dict(), "model_resnet.pt")
+    torch.save(model.state_dict(), save_path)
 
-def test_model(test_dl, device):
+def test_model(test_dl, device, model_path):
     model = ViolenceClassifier(num_classes=1)
     model.load_state_dict(torch.load("model_resnet.pt"))
     model.to(device)
@@ -79,9 +79,9 @@ def test_model(test_dl, device):
 if __name__ == '__main__':
     config = configparser.ConfigParser()
     config.read("config.conf")
-    epochs = int(config["Training"]["Epochs"])
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    epochs = int(config["Training"]["epochs"])
+    device = config["Training"]["device"]
 
     train_dl, test_dl = get_data_loader(R3D_18_Weights.DEFAULT.transforms(), clip_len=16)
-    # train_model(train_dl, epochs, device)
-    test_model(test_dl, device)
+    train_model(train_dl, epochs, device, config["Training"]["model_save_path"])
+    test_model(test_dl, device, config["Training"]["model_save_path"])
