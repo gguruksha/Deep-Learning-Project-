@@ -1,9 +1,5 @@
 import streamlit as st
 import os
-import torch
-from inference_and_annotate import annotate_video  # Import the annotate_video function
-from video_resnet import ViolenceClassifier  # Import the ViolenceClassifier
-import shutil
 from run_inference import ViolenceClassifierInference, get_clips, stitch_clips_with_annotations
 import configparser
 
@@ -14,12 +10,12 @@ config.read("config.conf")
 st.set_page_config(page_title="Violence Detection", page_icon=":movie_camera:")
 
 # Set constants
-TEMP_VIDEO_PATH = "temp_video.mp4"
-ANNOTATED_VIDEO_PATH = "annotated_video.mp4"
-MODEL_PATH = "model_resnet.pt"
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+TEMP_VIDEO_PATH = config['Streamlit']['temp_folder'] + os.path.sep + 'temp_video.mp4'
+ANNOTATED_VIDEO_PATH = config['Streamlit']['temp_folder'] + os.path.sep + "annotated_video.mp4"
+MODEL_PATH = config['Streamlit']['model_path']
+DEVICE = config['Streamlit']['device']
 
-inference_engine = ViolenceClassifierInference()
+inference_engine = ViolenceClassifierInference(MODEL_PATH, DEVICE)
 
 # Streamlit UI
 st.title("Violent vs Non-Violent Video Classification with Annotation")
