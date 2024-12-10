@@ -81,7 +81,6 @@ st.markdown(
 st.sidebar.header("Model Details")
 st.sidebar.write("Model: ResNet-3D (r3d_18)")
 st.sidebar.write("Clip Length: 16 frames")
-st.sidebar.write("Overlap: 8 frames")
 st.sidebar.write("Threshold: 0.5 for Violent classification")
 st.sidebar.write(f"Device: {'GPU' if torch.cuda.is_available() else 'CPU'}")
 
