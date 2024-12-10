@@ -163,7 +163,7 @@ def test_model(model_path, test_dataloader):
     print(f"Final Test Accuracy: {accuracy_test:.2f}%")
 
 # Train the model
-train_model(model, train_dataloader, test_dataloader, criterion, optimizer, num_epochs=50)
+train_model(model, train_dataloader, test_dataloader, criterion, optimizer, num_epochs=3)
 
 # Test the model
 model_path = os.path.join(model_op, 'static_model.pt')
