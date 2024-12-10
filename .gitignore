@@ -1,2 +1,8 @@
 /Code/dataset/
+/Data
+/Code/video_labels.csv
 .idea
+/Code/model_resnet.pt
+/Code/temp_video.mp4
+/Code/annotated_video.mp4
+/Code/uploaded_video.mp4
